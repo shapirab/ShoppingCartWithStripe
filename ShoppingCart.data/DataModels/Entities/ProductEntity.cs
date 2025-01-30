@@ -14,5 +14,19 @@ namespace ShoppingCart.data.DataModels.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public required string Name { get; set; }
+        public string? Description { get; set; }
+        public decimal Price { get; set; }
+        public string? ImageUrl { get; set; }
+
+
+        [ForeignKey(nameof(ProductTypeId))]
+        public ProductTypeEntity ProductType { get; set; } = null!;
+        public int ProductTypeId { get; set; }
+
+
+        [ForeignKey(nameof(ProductBrandId))]
+        public ProductBrandEntity ProductBrand { get; set; } = null!;
+        public int ProductBrandId { get; set; }
+
     }
 }

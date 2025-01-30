@@ -18,6 +18,8 @@ namespace ShoppingCart.api.Extensions
             //        config.GetConnectionString("ConnectionStrings:ShoppingCartDB")));
 
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductTypeService, ProductTypeService>();
+            services.AddScoped<IProductBrandService, ProductBrandService>();
 
             return services;
         }

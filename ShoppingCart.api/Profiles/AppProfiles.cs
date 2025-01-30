@@ -13,6 +13,16 @@ namespace ShoppingCart.api.Profiles
             CreateMap<ProductEntity, Product>();
             CreateMap<ProductDto, ProductEntity>();
             CreateMap<ProductEntity, ProductDto>();
+            
+            CreateMap<ProductBrand, ProductBrandEntity>();
+            CreateMap<ProductBrandEntity, ProductBrand>();
+            CreateMap<ProductBrandDto, ProductBrandEntity>();
+            CreateMap<ProductBrandEntity, ProductBrandDto>();
+
+            CreateMap<ProductType, ProductTypeEntity>();
+            CreateMap<ProductTypeEntity, ProductType>();
+            CreateMap<ProductTypeDto, ProductTypeEntity>();
+            CreateMap<ProductTypeEntity, ProductTypeDto>();
         }
     }
 }

@@ -16,5 +16,20 @@ namespace ShoppingCart.data.DbContexts
         }
 
         public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<ProductBrandEntity> ProductBrands { get; set; }
+        public DbSet<ProductTypeEntity> ProductTypes { get; set; }
+
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<ProductEntity>()
+        //       .HasOne(brand => brand.ProductBrand)
+        //       .WithMany()
+        //       .HasForeignKey(prod => prod.ProductBrandId);
+
+        //    modelBuilder.Entity<ProductEntity>()
+        //      .HasOne(type => type.ProductType)
+        //      .WithMany()
+        //      .HasForeignKey(prod => prod.ProductTypeId);
+        //}
     }
 }
