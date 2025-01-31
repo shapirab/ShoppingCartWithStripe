@@ -15,8 +15,10 @@ namespace ShoppingCart.api.Profiles
             CreateMap<ProductEntity, ProductDto>();
             
             CreateMap<ProductEntity, ProductToReturnDto>()
-                .ForMember(destination => destination.ProductBrand, origin => origin.MapFrom(sourceMember => sourceMember.ProductBrand.Name))
-                .ForMember(destination => destination.ProductType, origin => origin.MapFrom(sourceMember => sourceMember.ProductType.Name));
+                .ForMember(destination => 
+                    destination.ProductBrand, origin => origin.MapFrom(sourceMember => sourceMember.ProductBrand.Name))
+                .ForMember(destination => 
+                    destination.ProductType, origin => origin.MapFrom(sourceMember => sourceMember.ProductType.Name));
 
 
 

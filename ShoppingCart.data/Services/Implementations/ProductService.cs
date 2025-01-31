@@ -35,7 +35,10 @@ namespace ShoppingCart.data.Services.Implementations
 
         public async Task<IEnumerable<ProductEntity>> GetAllProductsAsync()
         {
-            return await db.Products.OrderBy(prod => prod.Name).ToListAsync();
+            return await db.Products.OrderBy(prod => prod.Name)
+                .Include(prod => prod.ProductBrand)
+                .Include(prod => prod.ProductType)
+                .ToListAsync();
         }
 
         public async Task<(IEnumerable<ProductEntity>, PaginationMetaData)> GetAllProductsAsync
@@ -55,6 +58,8 @@ namespace ShoppingCart.data.Services.Implementations
             var collectionToReturn = await collection.OrderBy(prod => prod.Name)
                 .Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize)
+                .Include(prod => prod.ProductBrand)
+                .Include(prod => prod.ProductType)
                 .ToListAsync();
 
             return (collection, paginationMetadata);
@@ -62,7 +67,10 @@ namespace ShoppingCart.data.Services.Implementations
 
         public async Task<ProductEntity?> GetProductByIdAsync(int id)
         {
-            return await db.Products.FindAsync(id);
+            return await db.Products
+                .Include(prod => prod.ProductBrand)
+                .Include(prod => prod.ProductType)
+                .FirstOrDefaultAsync(prod => prod.Id == id); ;
         }
 
         public async Task<bool> IsProductExists(int id)

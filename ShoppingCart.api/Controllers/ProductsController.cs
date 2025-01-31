@@ -26,7 +26,7 @@ namespace ShoppingCart.api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetAllProductsAsync
+        public async Task<ActionResult<IEnumerable<ProductToReturnDto>>> GetAllProductsAsync
             (string? searchQuery, int pageNumber = 1, int pageSize = 10)
         {
             if (pageSize > maxPageSize)
@@ -36,18 +36,18 @@ namespace ShoppingCart.api.Controllers
             var (productEntities, paginationMetadata) =
                 await productService.GetAllProductsAsync(searchQuery, pageNumber, pageSize);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-            return Ok(mapper.Map<IEnumerable<Product>>(productEntities));
+            return Ok(mapper.Map<IEnumerable<ProductToReturnDto>>(productEntities));
         }
 
         [HttpGet("{id}", Name = "GetProduct")]
-        public async Task<ActionResult<Product>> GetProductById(int id)
+        public async Task<ActionResult<ProductToReturnDto>> GetProductById(int id)
         {
             ProductEntity? productEntity = await productService.GetProductByIdAsync(id);
             if (productEntity == null)
             {
                 return NotFound("Product with the provided id was not found");
             }
-            return Ok(mapper.Map<Product>(productEntity));
+            return Ok(mapper.Map<ProductToReturnDto>(productEntity));
         }
 
         //[Authorize(Policy = "AdminPolicy")]
