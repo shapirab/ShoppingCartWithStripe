@@ -27,14 +27,14 @@ namespace ShoppingCart.api.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductToReturnDto>>> GetAllProductsAsync
-            (string? searchQuery, int pageNumber = 1, int pageSize = 10)
+            (string? searchQuery, int? brandId, int? typeId, string? sort, int pageNumber = 1, int pageSize = 10)
         {
             if (pageSize > maxPageSize)
             {
                 pageSize = maxPageSize;
             }
             var (productEntities, paginationMetadata) =
-                await productService.GetAllProductsAsync(searchQuery, pageNumber, pageSize);
+                await productService.GetAllProductsAsync(searchQuery, brandId, typeId, sort, pageNumber, pageSize);
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
             return Ok(mapper.Map<IEnumerable<ProductToReturnDto>>(productEntities));
         }

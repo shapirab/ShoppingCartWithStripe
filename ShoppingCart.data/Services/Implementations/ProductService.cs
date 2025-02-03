@@ -42,20 +42,47 @@ namespace ShoppingCart.data.Services.Implementations
         }
 
         public async Task<(IEnumerable<ProductEntity>, PaginationMetaData)> GetAllProductsAsync
-            (string? searchQuery, int pageNumber, int pageSize)
+            (string? searchQuery, int?brandId, int? typeId, string? sort, int pageNumber, int pageSize)
         {
             IQueryable<ProductEntity> collection = db.Products as IQueryable<ProductEntity>;
+            collection = collection.OrderBy(prod => prod.Name);
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 collection = collection.Where(prod => prod.Name.Contains(searchQuery));
             }
 
+            if(brandId != null)
+            {
+                collection = collection.Where(prod => prod.ProductBrandId == brandId);
+            }
+
+            if (typeId != null)
+            {
+                collection = collection.Where(prod => prod.ProductTypeId == typeId);
+            }
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "priceASC":
+                        collection = collection.OrderBy(prod => prod.Price);
+                        break;
+                    case "priceDESC":
+                        collection = collection.OrderByDescending(prod => prod.Price);
+                        break;
+                    default:
+                        collection = collection.OrderBy(prod => prod.Name);
+                        break;
+                }
+            }
+
             int totalItemCount = await collection.CountAsync();
 
             PaginationMetaData paginationMetadata = new PaginationMetaData(totalItemCount, pageSize, pageNumber);
 
-            var collectionToReturn = await collection.OrderBy(prod => prod.Name)
+            var collectionToReturn = await collection
                 .Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize)
                 .Include(prod => prod.ProductBrand)
