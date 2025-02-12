@@ -42,7 +42,7 @@ namespace ShoppingCart.data.Services.Implementations
         }
 
         public async Task<(IEnumerable<ProductEntity>, PaginationMetaData)> GetAllProductsAsync
-            (string? searchQuery, int?brandId, int? typeId, string? sort, int pageNumber, int pageSize)
+            (string? searchQuery, List<int>? brandIds, List<int>? typeIds, string? sort, int pageNumber, int pageSize)
         {
             IQueryable<ProductEntity> collection = db.Products as IQueryable<ProductEntity>;
             collection = collection.OrderBy(prod => prod.Name);
@@ -52,14 +52,14 @@ namespace ShoppingCart.data.Services.Implementations
                 collection = collection.Where(prod => prod.Name.Contains(searchQuery));
             }
 
-            if(brandId != null)
+            if(brandIds != null && brandIds.Any())
             {
-                collection = collection.Where(prod => prod.ProductBrandId == brandId);
+                collection = collection.Where(prod => brandIds.Contains(prod.ProductBrandId));
             }
 
-            if (typeId != null)
+            if (typeIds != null && typeIds.Any())
             {
-                collection = collection.Where(prod => prod.ProductTypeId == typeId);
+                collection = collection.Where(prod => typeIds.Contains(prod.ProductTypeId));
             }
 
             if (!string.IsNullOrEmpty(sort))
@@ -89,7 +89,7 @@ namespace ShoppingCart.data.Services.Implementations
                 .Include(prod => prod.ProductType)
                 .ToListAsync();
 
-            return (collection, paginationMetadata);
+            return (collectionToReturn, paginationMetadata);
         }
 
         public async Task<ProductEntity?> GetProductByIdAsync(int id)

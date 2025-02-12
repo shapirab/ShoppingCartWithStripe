@@ -2,6 +2,7 @@
 using ShoppingCart.data.DbContexts;
 using ShoppingCart.data.Services.Implementations;
 using ShoppingCart.data.Services.Interfaces;
+using StackExchange.Redis;
 
 namespace ShoppingCart.api.Extensions
 {
@@ -20,6 +21,7 @@ namespace ShoppingCart.api.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductTypeService, ProductTypeService>();
             services.AddScoped<IProductBrandService, ProductBrandService>();
+            services.AddSingleton<ICartService, ShoppingCartReditService>();
 
             return services;
         }

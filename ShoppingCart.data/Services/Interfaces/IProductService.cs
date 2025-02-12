@@ -11,7 +11,7 @@ namespace ShoppingCart.data.Services.Interfaces
     {
         Task<IEnumerable<ProductEntity>> GetAllProductsAsync();
         Task<(IEnumerable<ProductEntity>, PaginationMetaData)> GetAllProductsAsync
-            (string? searchQuery, int? brandId, int? typeId, string? sort, int pageNumber, int pageSize);
+            (string? searchQuery, List<int>? brandIds, List<int>? typeIds, string? sort, int pageNumber, int pageSize);
         Task<ProductEntity?> GetProductByIdAsync(int id);
         Task AddProductAsync(ProductEntity product);
         Task DeleteProductAsync(int id);
