@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ShoppingCart.api.Extensions;
+using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DbContexts;
 using StackExchange.Redis;
 
@@ -17,6 +19,10 @@ builder.Services.AddDbContext<AppDbContext>(
         builder.Configuration["ConnectionStrings:ShoppingCartDB"]));
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<AppUser>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -36,6 +42,7 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader()
+               .AllowCredentials()
                .WithExposedHeaders("X-Pagination");
     });
 });
@@ -57,5 +64,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGroup("api").MapIdentityApi<AppUser>();
 
 app.Run();

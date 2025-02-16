@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ShoppingCart.data.DataModels.Dtos;
+using ShoppingCart.data.DataModels.Dtos.UserDtos;
 using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DataModels.Models;
 
@@ -20,8 +21,6 @@ namespace ShoppingCart.api.Profiles
                 .ForMember(destination => 
                     destination.ProductType, origin => origin.MapFrom(sourceMember => sourceMember.ProductType.Name));
 
-
-
             CreateMap<ProductBrand, ProductBrandEntity>();
             CreateMap<ProductBrandEntity, ProductBrand>();
             CreateMap<ProductBrandDto, ProductBrandEntity>();
@@ -31,6 +30,9 @@ namespace ShoppingCart.api.Profiles
             CreateMap<ProductTypeEntity, ProductType>();
             CreateMap<ProductTypeDto, ProductTypeEntity>();
             CreateMap<ProductTypeEntity, ProductTypeDto>();
+
+            CreateMap<Address, AddressDto>();
+            CreateMap<AddressDto, Address>();
         }
     }
 }

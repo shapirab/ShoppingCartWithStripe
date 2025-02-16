@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ShoppingCart.data.DataModels.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,16 +9,12 @@ using System.Threading.Tasks;
 
 namespace ShoppingCart.data.DbContexts
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
-        {
-            
-        }
-
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductBrandEntity> ProductBrands { get; set; }
         public DbSet<ProductTypeEntity> ProductTypes { get; set; }
+        //public DbSet<Address> Addresses { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
@@ -30,6 +27,10 @@ namespace ShoppingCart.data.DbContexts
         //      .HasOne(type => type.ProductType)
         //      .WithMany()
         //      .HasForeignKey(prod => prod.ProductTypeId);
+        //}
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Address>().HasNoKey();
         //}
     }
 }
