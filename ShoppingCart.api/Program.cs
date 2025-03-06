@@ -1,9 +1,14 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using ShoppingCart.api.Extensions;
 using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DbContexts;
 using StackExchange.Redis;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +28,16 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<AppDbContext>();
 
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        options.Cookie.SameSite = SameSiteMode.None;
+//        options.Cookie.HttpOnly = true;
+//        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//    });
+
+//builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -35,18 +50,18 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
     return ConnectionMultiplexer.Connect(configuration);
 });
 
+//.AllowCredentials()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder.WithOrigins("https://localhost:4200", "http://logalhost:4200")
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials()
                .WithExposedHeaders("X-Pagination");
     });
 });
-
 
 var app = builder.Build();
 

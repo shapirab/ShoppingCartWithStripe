@@ -97,7 +97,7 @@ namespace ShoppingCart.data.Services.Implementations
             return await db.Products
                 .Include(prod => prod.ProductBrand)
                 .Include(prod => prod.ProductType)
-                .FirstOrDefaultAsync(prod => prod.Id == id); ;
+                .FirstOrDefaultAsync(prod => prod.Id == id);
         }
 
         public async Task<bool> IsProductExists(int id)

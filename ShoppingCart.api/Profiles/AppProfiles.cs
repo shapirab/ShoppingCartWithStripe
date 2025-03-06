@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using ShoppingCart.data.DataModels.Dtos;
+using ShoppingCart.data.DataModels.Dtos.OrderDtos;
 using ShoppingCart.data.DataModels.Dtos.UserDtos;
 using ShoppingCart.data.DataModels.Entities;
+using ShoppingCart.data.DataModels.Entities.OrderAggregateEntities;
 using ShoppingCart.data.DataModels.Models;
 
 namespace ShoppingCart.api.Profiles
@@ -33,6 +35,13 @@ namespace ShoppingCart.api.Profiles
 
             CreateMap<Address, AddressDto>();
             CreateMap<AddressDto, Address>();
+
+            CreateMap<AppUser, RegisterDto>();
+            CreateMap<RegisterDto, AppUser>();
+
+            CreateMap<Order, ReturnOrderDto>();
+            CreateMap<ReturnOrderDto, Order>();
+
         }
     }
 }

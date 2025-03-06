@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ShoppingCart.data.DataModels.Dtos.UserDtos;
 using ShoppingCart.data.DataModels.Entities;
 using System.Security.Claims;
@@ -12,16 +14,8 @@ namespace ShoppingCart.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class AccountsController(SignInManager<AppUser> signInManager, IMapper mapper) : ControllerBase
     {
-        private readonly SignInManager<AppUser> signInManager;
-        private readonly IMapper mapper;
-
-        public AccountsController(SignInManager<AppUser> signInManager, IMapper mapper)
-        {
-            this.signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterDto registerDto)
         {
@@ -32,6 +26,7 @@ namespace ShoppingCart.api.Controllers
                 Email = registerDto.Email,
                 UserName = registerDto.Email
             };
+            //AppUser user = mapper.Map<AppUser>(registerDto);
             var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
@@ -42,6 +37,28 @@ namespace ShoppingCart.api.Controllers
                 }
                 return ValidationProblem();
             }
+            return Ok();
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(LoginDto loginDto)
+        {
+            var user = await signInManager.UserManager.FindByEmailAsync(loginDto.Email);
+            if (user == null) return Unauthorized();
+
+            var result = await signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded) return Unauthorized();
+
+            // Important: This creates and sets the auth cookie
+            await signInManager.SignInAsync(user, new AuthenticationProperties
+            {
+                IsPersistent = true,
+            });
+
+            // Add this temporary debug line
+            var authCookie = Response.Headers.FirstOrDefault(h => h.Key.Contains("Set-Cookie"));
+            //_logger.LogInformation("Auth cookie being set: {cookie}", authCookie.Value);
+
             return Ok();
         }
 
@@ -56,7 +73,7 @@ namespace ShoppingCart.api.Controllers
         [HttpGet("user-info")]
         public async Task<ActionResult> GetUserInfo()
         {
-            if(User.Identity?.IsAuthenticated == false)
+            if (User.Identity?.IsAuthenticated == false)
             {
                 return NoContent();
             }
@@ -65,7 +82,7 @@ namespace ShoppingCart.api.Controllers
                 .Include(user => user.Address)
                 .FirstOrDefaultAsync(user => user.Email == User.FindFirstValue(ClaimTypes.Email));
 
-            if(user == null)
+            if (user == null)
             {
                 return Unauthorized();
             }
@@ -79,7 +96,35 @@ namespace ShoppingCart.api.Controllers
             });
         }
 
-        [HttpGet]
+        //[HttpGet("user-info")]
+        //public async Task<ActionResult> GetUserInfo()
+        //{
+        //    We don't need to check IsAuthenticated because [Authorize] handles that
+        //    var email = User.FindFirstValue(ClaimTypes.Email);
+        //    if (string.IsNullOrEmpty(email))
+        //    {
+        //        return Unauthorized();
+        //    }
+
+        //    AppUser? user = await signInManager.UserManager.Users
+        //        .Include(user => user.Address)
+        //        .FirstOrDefaultAsync(user => user.Email == email);
+
+        //    if (user == null)
+        //    {
+        //        return Unauthorized();
+        //    }
+
+        //    return Ok(new
+        //    {
+        //        user.FirstName,
+        //        user.LastName,
+        //        user.Email,
+        //        address = mapper.Map<AddressDto>(user.Address)
+        //    });
+        //}
+
+        [HttpGet("auth-status")]
         public ActionResult GetAuthState()
         {
             return Ok(new

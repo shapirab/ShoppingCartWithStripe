@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShoppingCart.data.DbContexts;
 
@@ -11,9 +12,11 @@ using ShoppingCart.data.DbContexts;
 namespace ShoppingCart.data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250224130545_addedDeliveryMethods")]
+    partial class addedDeliveryMethods
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,66 +298,6 @@ namespace ShoppingCart.data.Migrations
                     b.ToTable("DeliveryMethods");
                 });
 
-            modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.OrderAggregateEntities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DeliveryMethodId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentIntentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeliveryMethodId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.OrderAggregateEntities.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItems");
-                });
-
             modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.ProductBrandEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -485,124 +428,6 @@ namespace ShoppingCart.data.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.OrderAggregateEntities.Order", b =>
-                {
-                    b.HasOne("ShoppingCart.data.DataModels.Entities.DeliveryMethodEntity", "DeliveryMethod")
-                        .WithMany()
-                        .HasForeignKey("DeliveryMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("ShoppingCart.data.DataModels.Models.OrderAggregate.PaymentSummary", "PaymentSummary", b1 =>
-                        {
-                            b1.Property<int>("OrderId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("CreditCartType")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("ExpMonth")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("ExpYear")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("LastFourDigits")
-                                .HasColumnType("int");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
-                    b.OwnsOne("ShoppingCart.data.DataModels.Models.OrderAggregate.ShippingAddress", "ShippingAddress", b1 =>
-                        {
-                            b1.Property<int>("OrderId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Line1")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Line2")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
-                    b.Navigation("DeliveryMethod");
-
-                    b.Navigation("PaymentSummary")
-                        .IsRequired();
-
-                    b.Navigation("ShippingAddress")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.OrderAggregateEntities.OrderItem", b =>
-                {
-                    b.HasOne("ShoppingCart.data.DataModels.Entities.OrderAggregateEntities.Order", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("ShoppingCart.data.DataModels.Models.OrderAggregate.ProductItemOrdered", "ItemOrdered", b1 =>
-                        {
-                            b1.Property<int>("OrderItemId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ImageUrl")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("ProductId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ProductName")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("OrderItemId");
-
-                            b1.ToTable("OrderItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderItemId");
-                        });
-
-                    b.Navigation("ItemOrdered")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.ProductEntity", b =>
                 {
                     b.HasOne("ShoppingCart.data.DataModels.Entities.ProductBrandEntity", "ProductBrand")
@@ -620,11 +445,6 @@ namespace ShoppingCart.data.Migrations
                     b.Navigation("ProductBrand");
 
                     b.Navigation("ProductType");
-                });
-
-            modelBuilder.Entity("ShoppingCart.data.DataModels.Entities.OrderAggregateEntities.Order", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }
