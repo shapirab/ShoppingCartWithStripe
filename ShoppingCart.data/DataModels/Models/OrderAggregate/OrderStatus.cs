@@ -10,7 +10,8 @@ namespace ShoppingCart.data.DataModels.Models.OrderAggregate
     {
         PENDING,
         PAYMENT_RECIEVED,
-        PAYMENT_FAILED
+        PAYMENT_FAILED,
+        PAYMENT_MISMATCH
         
     }
 }

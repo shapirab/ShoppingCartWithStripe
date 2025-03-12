@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using ShoppingCart.api.Extensions;
+using ShoppingCart.api.SignalR;
 using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DbContexts;
 using StackExchange.Redis;
@@ -27,6 +28,8 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddSignalR();
 
 //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 //    .AddCookie(options =>
@@ -74,11 +77,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
+
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>();
+app.MapHub<NotificationHub>("/hub/notifications");
 
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.data.DataModels.Dtos.OrderDtos;
@@ -13,6 +14,7 @@ namespace ShoppingCart.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService orderService;
@@ -123,6 +125,11 @@ namespace ShoppingCart.api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ReturnOrderDto>> GetOrderById(int id)
         {
+            string? email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest("User email was not found");
+            }
             Order? order = await orderService.GetOrderByIdAsync(id);
             if(order == null)
             {

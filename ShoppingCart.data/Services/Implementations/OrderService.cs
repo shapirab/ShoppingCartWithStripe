@@ -25,7 +25,7 @@ namespace ShoppingCart.data.Services.Implementations
         {
             await db.Orders.AddAsync(order);
         }
-
+        
         public async Task DeleteOrderAsync(int id)
         {
             Order? order = await db.Orders.FindAsync(id);
@@ -95,6 +95,14 @@ namespace ShoppingCart.data.Services.Implementations
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Order?> GetOrderByPaymentIntentIdAsync(string paymentIntentId)
+        {
+            return await db.Orders.Where(order => order.PaymentIntentId == paymentIntentId)
+                .Include(order => order.DeliveryMethod)
+                .Include(order => order.OrderItems)
+                .FirstOrDefaultAsync();
+        }
+
 
         public async Task<bool> IsOrderExists(int id)
         {
@@ -106,5 +114,7 @@ namespace ShoppingCart.data.Services.Implementations
         {
             return await db.SaveChangesAsync() > 0;
         }
+
+        
     }
 }
