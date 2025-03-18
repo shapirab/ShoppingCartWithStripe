@@ -11,13 +11,25 @@ using System.Threading.Tasks;
 
 namespace ShoppingCart.data.Services.Implementations
 {
-    public class PaymentService(IConfiguration config, ICartService cartService, 
-        IProductService productService, IDeliveryMethodService deliveryMethodService) : IPaymentService
+    public class PaymentService : IPaymentService
     {
+        private readonly ICartService cartService;
+        private readonly IProductService productService;
+        private readonly IDeliveryMethodService deliveryMethodService;
+
+        public PaymentService(IConfiguration config, ICartService cartService,
+        IProductService productService, IDeliveryMethodService deliveryMethodService)
+        {
+            this.cartService = cartService ?? throw new ArgumentNullException(nameof(cartService));
+            this.productService = productService ?? throw new ArgumentNullException(nameof(productService));
+            this.deliveryMethodService = deliveryMethodService ?? 
+                throw new ArgumentNullException(nameof(deliveryMethodService));
+
+            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+        }
+
         public async Task<ShoppingCartModel?> CreateOrUpdatePaymentIntent(string cartId)
         {
-            StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
-
             ShoppingCartModel? cart = await cartService.GetShoppingCartAsync(cartId);
             if (cart == null) return null;
 
@@ -48,7 +60,8 @@ namespace ShoppingCart.data.Services.Implementations
             {
                 PaymentIntentCreateOptions options = new PaymentIntentCreateOptions
                 {
-                    Amount = (long)cart.Items.Sum(item => item.Quantity * (item.Price * 100)) + (long)shippingPrice * 100,
+                    Amount = (long)cart.Items.Sum(item => item.Quantity * (item.Price * 100)) + 
+                                (long)shippingPrice * 100,
                     Currency = "usd",
                     PaymentMethodTypes = ["card"]
                 };
@@ -67,6 +80,18 @@ namespace ShoppingCart.data.Services.Implementations
             }
             await cartService.AddOrUpdateShoppingCartAsync(cart);
             return cart;
+        }
+
+        public async Task<string> RefundPayment(string paymentIndentId)
+        {
+            RefundCreateOptions refundOptions = new RefundCreateOptions
+            {
+                PaymentIntent = paymentIndentId
+            };
+
+            RefundService refundService = new RefundService();
+            var results = await refundService.CreateAsync(refundOptions);
+            return results.Status;
         }
     }
 }

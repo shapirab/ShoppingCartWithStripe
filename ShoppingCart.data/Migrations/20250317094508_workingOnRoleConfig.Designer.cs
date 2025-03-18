@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShoppingCart.data.DbContexts;
 
@@ -11,9 +12,11 @@ using ShoppingCart.data.DbContexts;
 namespace ShoppingCart.data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250317094508_workingOnRoleConfig")]
+    partial class workingOnRoleConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace ShoppingCart.data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b8a9d9a1-d029-4f21-a9cd-b0df9e0f3abe",
+                            Id = "7762bd0e-f400-45e7-a98c-de704d58c817",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "edc3c74c-e90e-45d7-a7c4-4c3c7c4b1234",
+                            Id = "e61380b2-33c4-407d-af79-f72d9e89f111",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         });

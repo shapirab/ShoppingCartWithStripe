@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.data.DataModels.Dtos;
@@ -49,7 +50,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<ProductType>(productTypeEntity));
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductType>> AddProductType(ProductTypeDto productTypeDto)
         {
@@ -71,7 +72,7 @@ namespace ShoppingCart.api.Controllers
             }, productTypeToReturn);
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<bool>> UpdateProductType(int id, ProductTypeDto updatedProductType)
         {
@@ -84,7 +85,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(await typeService.SaveChangesAsync());
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteProductType(int id)
         {

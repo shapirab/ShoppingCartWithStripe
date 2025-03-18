@@ -7,8 +7,10 @@ using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DataModels.Entities.OrderAggregateEntities;
 using ShoppingCart.data.DataModels.Models;
 using ShoppingCart.data.DataModels.Models.OrderAggregate;
+using ShoppingCart.data.Services;
 using ShoppingCart.data.Services.Interfaces;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace ShoppingCart.api.Controllers
 {
@@ -22,6 +24,8 @@ namespace ShoppingCart.api.Controllers
         private readonly IProductService productService;
         private readonly IDeliveryMethodService deliveryMethodService;
         private readonly IMapper mapper;
+
+        private readonly int maxPageSize = 20;
 
         public OrdersController(IOrderService orderService, ICartService cartService,
             IProductService productService, IDeliveryMethodService deliveryMethodService, IMapper mapper)
@@ -103,10 +107,22 @@ namespace ShoppingCart.api.Controllers
             return Ok(order);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReturnOrderDto>>> GetAllOrdersAsync()
+        public async Task<ActionResult<IEnumerable<ReturnOrderDto>>> GetAllOrdersAsync
+            (string? searchQuery, DateTime? orderDate, OrderStatus? orderStatus,
+            int pageNumber = 1, int pageSize = 10)
         {
-            IEnumerable<Order> orders = await orderService.GetAllOrdersAsync();
+            if(pageSize > maxPageSize)
+            {
+                pageSize = maxPageSize;
+            }
+
+            var(orders, PaginationMetaData) = await orderService.GetAllOrdersAsync
+                (searchQuery, orderDate, orderStatus, pageNumber, pageSize);
+            
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(PaginationMetaData));
+
             return Ok(mapper.Map<IEnumerable<ReturnOrderDto>>(orders));
         }
 
@@ -122,6 +138,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<IEnumerable<ReturnOrderDto>>(customerOrders));
         }
 
+        [Authorize]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ReturnOrderDto>> GetOrderById(int id)
         {

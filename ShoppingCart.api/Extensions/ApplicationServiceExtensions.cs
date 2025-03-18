@@ -24,6 +24,7 @@ namespace ShoppingCart.api.Extensions
             services.AddScoped<IDeliveryMethodService, DeliveryMethodService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IOrderService, OrderService>();
+
             services.AddSingleton<ICartService, ShoppingCartReditService>();
 
             return services;

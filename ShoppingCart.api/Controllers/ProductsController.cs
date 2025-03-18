@@ -51,7 +51,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<ProductToReturnDto>(productEntity));
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Product>> AddProduct(ProductDto product)
         {
@@ -73,7 +73,7 @@ namespace ShoppingCart.api.Controllers
             }, productToReturn);
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<bool>> UpdateProduct(int id, ProductDto updatedProduct)
         {
@@ -86,7 +86,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(await productService.SaveChangesAsync());
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteProduct(int id)
         {

@@ -41,6 +41,30 @@ namespace ShoppingCart.api.Controllers
             return Ok(cart);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("refund/{id:int}")]
+        public async Task<ActionResult<ReturnOrderDto>> RefundOrder(int id)
+        {
+            Order? order = await orderService.GetOrderByIdAsync(id);
+            if(order == null)
+            {
+                return BadRequest("Order with this id was not found");
+            }
+            if(order.OrderStatus == OrderStatus.PENDING)
+            {
+                return BadRequest("Payment was not received for that order");
+            }
+
+            string? results = await paymentService.RefundPayment(order.PaymentIntentId);
+            if(results == "succeeded")
+            {
+                order.OrderStatus = OrderStatus.REFUNDED;
+                await orderService.SaveChangesAsync();
+                return Ok(mapper.Map<ReturnOrderDto>(order));
+            }
+            return BadRequest("Problem in refunding order");
+        }
+
         [HttpGet("delivery-methods")]
         public async Task<ActionResult<IEnumerable<DeliveryMethodEntity>>> GetDeliveryMethods()
         {

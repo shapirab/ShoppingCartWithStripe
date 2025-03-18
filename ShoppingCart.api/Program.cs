@@ -27,6 +27,7 @@ builder.Services.AddDbContext<AppDbContext>(
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddSignalR();

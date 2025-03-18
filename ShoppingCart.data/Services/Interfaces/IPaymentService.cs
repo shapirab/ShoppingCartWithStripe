@@ -10,5 +10,6 @@ namespace ShoppingCart.data.Services.Interfaces
     public interface IPaymentService
     {
         Task<ShoppingCartModel?> CreateOrUpdatePaymentIntent(string cartId);
+        Task<string> RefundPayment(string paymentIndentId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.data.DataModels.Dtos;
@@ -50,7 +51,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<ProductBrand>(productBrandEntity));
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductBrand>> AddProductBrand(ProductBrandDto productBrandDto)
         {
@@ -72,7 +73,7 @@ namespace ShoppingCart.api.Controllers
             }, productBrandToReturn);
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<bool>> UpdateProductBrand(int id, ProductBrandDto updatedProductBrand)
         {
@@ -85,7 +86,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(await brandService.SaveChangesAsync());
         }
 
-        //[Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteProductBrand(int id)
         {

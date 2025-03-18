@@ -92,7 +92,8 @@ namespace ShoppingCart.api.Controllers
                 user.FirstName,
                 user.LastName,
                 user.Email,
-                address = mapper.Map<AddressDto>(user.Address)
+                address = mapper.Map<AddressDto>(user.Address),
+                roles = User.FindFirstValue(ClaimTypes.Role)
             });
         }
 
