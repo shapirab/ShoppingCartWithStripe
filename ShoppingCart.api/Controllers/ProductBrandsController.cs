@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingCart.api.Attributes;
 using ShoppingCart.data.DataModels.Dtos;
 using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DataModels.Models;
@@ -26,6 +27,7 @@ namespace ShoppingCart.api.Controllers
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        [Cache(864000)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductBrand>>> GetAllProductBrandsAsync
            (string? searchQuery, int pageNumber = 1, int pageSize = 10)
@@ -40,6 +42,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<IEnumerable<ProductBrand>>(productBrandEntities));
         }
 
+        [Cache(864000)]
         [HttpGet("{id}", Name = "GetProductBrand")]
         public async Task<ActionResult<ProductBrand>> GetProductBrandById(int id)
         {

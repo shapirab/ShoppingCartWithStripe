@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingCart.api.Attributes;
 using ShoppingCart.data.DataModels.Dtos;
 using ShoppingCart.data.DataModels.Entities;
 using ShoppingCart.data.DataModels.Models;
@@ -25,6 +26,7 @@ namespace ShoppingCart.api.Controllers
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        [Cache(600)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductToReturnDto>>> GetAllProductsAsync
             ([FromQuery]string? searchQuery, [FromQuery] List<int>? brandIds, [FromQuery] List<int>? typeIds, 
@@ -40,6 +42,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<IEnumerable<ProductToReturnDto>>(productEntities));
         }
 
+        [Cache(600)]
         [HttpGet("{id}", Name = "GetProduct")]
         public async Task<ActionResult<ProductToReturnDto>> GetProductById(int id)
         {
@@ -51,6 +54,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(mapper.Map<ProductToReturnDto>(productEntity));
         }
 
+        [InvalidateCache("api/products|")]
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Product>> AddProduct(ProductDto product)
@@ -73,6 +77,7 @@ namespace ShoppingCart.api.Controllers
             }, productToReturn);
         }
 
+        [InvalidateCache("api/products|")]
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<bool>> UpdateProduct(int id, ProductDto updatedProduct)
@@ -86,6 +91,7 @@ namespace ShoppingCart.api.Controllers
             return Ok(await productService.SaveChangesAsync());
         }
 
+        [InvalidateCache("api/products|")]
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteProduct(int id)

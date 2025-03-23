@@ -26,6 +26,7 @@ namespace ShoppingCart.api.Extensions
             services.AddScoped<IOrderService, OrderService>();
 
             services.AddSingleton<ICartService, ShoppingCartReditService>();
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             return services;
         }
